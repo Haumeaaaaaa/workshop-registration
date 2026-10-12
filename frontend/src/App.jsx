@@ -1,122 +1,107 @@
-import { useState } from 'react'
-import heroImg from './assets/hero.png'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import './App.css'
+import { useState, useEffect } from 'react';
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [workshops, setWorkshops] = useState([]);
+  const [formData, setFormData] = useState({ workshop_id: '', name: '', email: '' });
+  const [message, setMessage] = useState('');
+
+  // Pulls the build number injected by Jenkins, defaults to 'local' for now
+  const buildNumber = import.meta.env.VITE_BUILD_NUMBER || 'local';
+
+  useEffect(() => {
+    // We use relative paths because the Nginx proxy routes /api to the backends
+    fetch('/api/workshops/')
+      .then(res => res.json())
+      .then(data => setWorkshops(data))
+      .catch(err => console.error('Fetch error:', err));
+  }, []);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setMessage('');
+    try {
+      const response = await fetch('/api/registrations/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
+      });
+      const result = await response.json();
+      
+      if (response.ok) {
+        setMessage('Success: ' + result.message);
+        setFormData({ workshop_id: '', name: '', email: '' }); // Reset form
+      } else {
+        setMessage('Error: ' + result.error);
+      }
+    } catch (err) {
+      setMessage('Network error. Please try again.');
+    }
+  };
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
+    <div style={{ fontFamily: 'sans-serif', maxWidth: '600px', margin: '40px auto', padding: '20px' }}>
+      <h1>Workshop Registration</h1>
+      
+      <div style={{ marginBottom: '30px', padding: '15px', backgroundColor: '#f5f5f5', borderRadius: '8px' }}>
+        <h2>Available Workshops</h2>
+        <ul style={{ paddingLeft: '20px' }}>
+          {workshops.map(w => (
+            <li key={w.id} style={{ marginBottom: '10px' }}>
+              <strong>{w.title}</strong> - {w.description} <br/>
+              <small>Capacity: {w.capacity} seats</small>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <h2>Register Here</h2>
+      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+        <select 
+          required
+          value={formData.workshop_id} 
+          onChange={(e) => setFormData({...formData, workshop_id: e.target.value})}
+          style={{ padding: '8px' }}
         >
-          Count is {count}
+          <option value="">-- Select a Workshop --</option>
+          {workshops.map(w => (
+            <option key={w.id} value={w.id}>{w.title}</option>
+          ))}
+        </select>
+        
+        <input 
+          type="text" 
+          placeholder="Your Name" 
+          required 
+          value={formData.name}
+          onChange={(e) => setFormData({...formData, name: e.target.value})}
+          style={{ padding: '8px' }}
+        />
+        
+        <input 
+          type="email" 
+          placeholder="Your Email" 
+          required 
+          value={formData.email}
+          onChange={(e) => setFormData({...formData, email: e.target.value})}
+          style={{ padding: '8px' }}
+        />
+        
+        <button type="submit" style={{ padding: '10px', backgroundColor: '#007bff', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
+          Submit Registration
         </button>
-      </section>
+      </form>
 
-      <div className="ticks"></div>
+      {message && (
+        <p style={{ marginTop: '20px', padding: '10px', backgroundColor: message.includes('Error') ? '#ffebee' : '#e8f5e9', borderRadius: '4px' }}>
+          {message}
+        </p>
+      )}
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+      <footer style={{ marginTop: '50px', borderTop: '1px solid #ccc', paddingTop: '10px', fontSize: '0.8em', color: '#666' }}>
+        <p>Build Number: {buildNumber}</p>
+      </footer>
+    </div>
+  );
 }
 
-export default App
+export default App;
