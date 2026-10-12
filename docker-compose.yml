@@ -1,0 +1,56 @@
+version: '3.8'
+
+services:
+  proxy:
+    build: ./proxy
+    ports:
+      - "8080:80"
+    networks:
+      - app-network
+    depends_on:
+      - frontend
+      - workshops-api
+      - registrations-api
+
+  frontend:
+    build: ./frontend
+    networks:
+      - app-network
+
+  workshops-api:
+    build: ./workshops-api
+    networks:
+      - app-network
+    environment:
+      - DB_HOST=db
+      - DB_USER=root
+      - DB_PASS=rootpassword
+      - DB_NAME=workshop_db
+
+  registrations-api:
+    build: ./registrations-api
+    networks:
+      - app-network
+    environment:
+      - DB_HOST=db
+      - DB_USER=root
+      - DB_PASS=rootpassword
+      - DB_NAME=workshop_db
+
+  db:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: workshop_db
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  mysql-data:
