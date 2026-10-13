@@ -32,7 +32,7 @@ pipeline {
                 // Uses the Credentials Binding plugin to securely pull your Secret file
                 withCredentials([file(credentialsId: 'prod-env', variable: 'SECRET_ENV')]) {
                     sh 'cp $SECRET_ENV .env'
-                    sh 'TAG=${TAG} docker compose up -d --no-build'
+                    sh 'TAG=${TAG} docker-compose up -d --no-build'
                 }
             }
         }
