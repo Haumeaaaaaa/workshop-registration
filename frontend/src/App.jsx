@@ -40,7 +40,7 @@ function App() {
 
   return (
     <div style={{ fontFamily: 'sans-serif', maxWidth: '600px', margin: '40px auto', padding: '20px' }}>
-      <h1>Workshop Registration</h1>
+      <h1>Workshop Registration - Live Demo</h1>
       
       <div style={{ marginBottom: '30px', padding: '15px', backgroundColor: '#f5f5f5', borderRadius: '8px' }}>
         <h2>Available Workshops</h2>
