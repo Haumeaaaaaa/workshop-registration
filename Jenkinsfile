@@ -27,15 +27,20 @@ pipeline {
         }
         
         stage('Deploy') {
-            steps {
-                echo 'Deploying application stack...'
-                // Uses the Credentials Binding plugin to securely pull your Secret file
-                withCredentials([file(credentialsId: 'prod-env', variable: 'SECRET_ENV')]) {
-                    sh 'cp $SECRET_ENV .env'
-                    sh 'TAG=${TAG} docker-compose up -d --no-build'
-                }
+        steps {
+            echo 'Deploying application stack...'
+            withCredentials([file(credentialsId: 'prod-env', variable: 'SECRET_ENV')]) {
+                sh 'cp $SECRET_ENV .env'
+                
+                // Download the official Docker Compose binary directly into the workspace
+                sh 'curl -sSL https://github.com/docker/compose/releases/download/v2.30.3/docker-compose-linux-x86_64 -o docker-compose'
+                sh 'chmod +x docker-compose'
+                
+                // Run it using the downloaded binary
+                sh 'TAG=${TAG} ./docker-compose up -d --no-build'
             }
         }
+    }
         
         stage('Smoke Test') {
             steps {
