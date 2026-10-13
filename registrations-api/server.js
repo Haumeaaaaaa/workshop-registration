@@ -36,26 +36,31 @@ app.get('/', async (req, res) => {
 app.post('/', async (req, res) => {
     const { workshop_id, name, email } = req.body;
     
+    // 1. Check for bad names or emails
+    if (!name || name.trim() === '' || !email || !email.includes('@')) {
+        return res.status(400).json({ error: 'Please provide a valid name and email.' });
+    }
+
     try {
-        // 1. Seat Capacity Check
+        // 2. Seat Capacity Check
         const [workshops] = await pool.query('SELECT capacity FROM workshops WHERE id = ?', [workshop_id]);
         if (workshops.length === 0) return res.status(404).json({ error: 'Workshop not found' });
         const capacity = workshops[0].capacity;
 
         const [regs] = await pool.query('SELECT COUNT(*) as count FROM registrations WHERE workshop_id = ?', [workshop_id]);
         if (regs[0].count >= capacity) {
-            return res.status(400).json({ error: 'Workshop is at full capacity' });
+            return res.status(400).json({ error: 'Sorry, this workshop is full.' });
         }
 
-        // 2. Duplicate Email Check
+        // 3. Duplicate Email Check
         const [existing] = await pool.query('SELECT * FROM registrations WHERE email = ? AND workshop_id = ?', [email, workshop_id]);
         if (existing.length > 0) {
-            return res.status(400).json({ error: 'Email already registered for this workshop' });
+            return res.status(400).json({ error: 'You are already registered for this workshop.' });
         }
 
-        // 3. Insert Registration
+        // 4. Insert Registration
         await pool.query('INSERT INTO registrations (workshop_id, name, email) VALUES (?, ?, ?)', [workshop_id, name, email]);
-        res.status(201).json({ message: 'Registration successful' });
+        res.status(201).json({ message: 'Seat saved successfully!' });
 
     } catch (error) {
         res.status(500).json({ error: error.message });

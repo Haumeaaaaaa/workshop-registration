@@ -10,7 +10,7 @@ function App() {
 
   useEffect(() => {
     // We use relative paths because the Nginx proxy routes /api to the backends
-    fetch('/api/workshops/')
+    fetch('/api/workshops')
       .then(res => res.json())
       .then(data => setWorkshops(data))
       .catch(err => console.error('Fetch error:', err));
@@ -20,7 +20,7 @@ function App() {
     e.preventDefault();
     setMessage('');
     try {
-      const response = await fetch('/api/registrations/', {
+      const response = await fetch('/api/registrations', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData)
@@ -47,7 +47,7 @@ function App() {
         <ul style={{ paddingLeft: '20px' }}>
           {workshops.map(w => (
             <li key={w.id} style={{ marginBottom: '10px' }}>
-              <strong>{w.title}</strong> - {w.description} <br/>
+              <strong>{w.title}</strong> <br/>
               <small>Capacity: {w.capacity} seats</small>
             </li>
           ))}
