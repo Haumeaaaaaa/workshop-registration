@@ -2,6 +2,7 @@ version: '3.8'
 
 services:
   proxy:
+    image: workshop-proxy:${TAG:-latest}
     build: ./proxy
     ports:
       - "8080:80"
@@ -13,11 +14,13 @@ services:
       - registrations-api
 
   frontend:
+    image: workshop-frontend:${TAG:-latest}
     build: ./frontend
     networks:
       - app-network
 
   workshops-api:
+    image: workshop-workshops-api:${TAG:-latest}
     build: ./workshops-api
     networks:
       - app-network
@@ -28,6 +31,7 @@ services:
       - DB_NAME=workshop_db
 
   registrations-api:
+    image: workshop-registrations-api:${TAG:-latest}
     build: ./registrations-api
     networks:
       - app-network
