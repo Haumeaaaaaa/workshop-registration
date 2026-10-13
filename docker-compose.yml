@@ -43,16 +43,16 @@ services:
       - DB_NAME=workshop_db
       - ADMIN_TOKEN=${ADMIN_TOKEN:-change-me-dev}
 
-  db:
-    image: mysql:8.0
-    environment:
-      MYSQL_ROOT_PASSWORD: rootpassword
-      MYSQL_DATABASE: workshop_db
-    volumes:
-      - mysql-data:/var/lib/mysql
-      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
-    networks:
-      - app-network
+    db:
+      image: workshop-db:${TAG:-latest}
+      build: ./db
+      environment:
+        MYSQL_ROOT_PASSWORD: rootpassword
+        MYSQL_DATABASE: workshop_db
+      volumes:
+        - mysql-data:/var/lib/mysql
+      networks:
+        - app-network
 
 networks:
   app-network:

@@ -23,6 +23,8 @@ pipeline {
                 // Injects the Jenkins build number into the React footer
                 sh 'docker build --build-arg BUILD_NUMBER=${TAG} -t workshop-frontend:${TAG} ./frontend'
                 sh 'docker build -t workshop-proxy:${TAG} ./proxy'
+                // Database image with init.sql baked in (fixes the bind-mount problem under Jenkins)
+                sh 'docker build -t workshop-db:${TAG} ./db'
             }
         }
         
