@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   proxy:
     image: workshop-proxy:${TAG:-latest}
@@ -43,16 +41,16 @@ services:
       - DB_NAME=workshop_db
       - ADMIN_TOKEN=${ADMIN_TOKEN:-change-me-dev}
 
-    db:
-      image: workshop-db:${TAG:-latest}
-      build: ./db
-      environment:
-        MYSQL_ROOT_PASSWORD: rootpassword
-        MYSQL_DATABASE: workshop_db
-      volumes:
-        - mysql-data:/var/lib/mysql
-      networks:
-        - app-network
+  db:
+    image: workshop-db:${TAG:-latest}
+    build: ./db
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: workshop_db
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - app-network
 
 networks:
   app-network:
