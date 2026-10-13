@@ -33,6 +33,7 @@ services:
   registrations-api:
     image: workshop-registrations-api:${TAG:-latest}
     build: ./registrations-api
+    restart: unless-stopped
     networks:
       - app-network
     environment:
@@ -40,6 +41,7 @@ services:
       - DB_USER=root
       - DB_PASS=rootpassword
       - DB_NAME=workshop_db
+      - ADMIN_TOKEN=${ADMIN_TOKEN:-change-me-dev}
 
   db:
     image: mysql:8.0
