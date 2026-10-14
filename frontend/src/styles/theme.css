@@ -1,0 +1,101 @@
+:root {
+  --bg: #f8fafc;
+  --panel: #ffffff;
+  --text: #0f172a;
+  --text-muted: #64748b;
+  --accent: #0ea5e9;
+  --accent-2: #6366f1;
+  --border: #e2e8f0;
+  --error: #ef4444;
+  --success: #10b981;
+}
+
+[data-theme='dark'] {
+  --bg: #0f172a;
+  --panel: #1e293b;
+  --text: #f8fafc;
+  --text-muted: #94a3b8;
+  --accent: #5eead4; /* Teal */
+  --accent-2: #818cf8; /* Indigo */
+  --border: #334155;
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--text);
+  transition: background-color 0.3s ease, color 0.3s ease;
+  margin: 0;
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
+/* HUD Elements */
+.hud-number {
+  background: linear-gradient(to right, var(--accent), var(--accent-2));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-size: 2.5rem;
+  font-weight: bold;
+}
+
+/* Reference ID Pill */
+.ref-pill {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  background: rgba(94, 234, 212, 0.1);
+  border: 1px solid var(--accent);
+  border-radius: 9999px;
+  color: var(--accent);
+  font-family: monospace;
+  letter-spacing: 1px;
+  font-size: 1.1rem;
+}
+
+/* Progress Bar */
+.progress-bg {
+  background: var(--border);
+  border-radius: 999px;
+  height: 8px;
+  overflow: hidden;
+  width: 100%;
+  margin-top: 0.5rem;
+}
+.progress-fill {
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  height: 100%;
+  transition: width 0.5s ease;
+}
+
+/* Card Layouts & Hover Glow */
+.card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.5rem;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
+}
+[data-theme='dark'] .card:hover {
+  box-shadow: 0 10px 25px -5px rgba(94, 234, 212, 0.15);
+}
+
+/* Animations */
+@keyframes staggeredRise {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-rise {
+  animation: staggeredRise 0.4s ease-out forwards;
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

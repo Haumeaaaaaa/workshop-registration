@@ -22,11 +22,15 @@ app.get('/health', (req, res) => {
 
 app.get('/', async (req, res) => {
     try {
-        const [rows] = await pool.query('SELECT * FROM workshops');
+        const [rows] = await pool.query(`
+            SELECT w.id, w.title, w.capacity, COUNT(r.id) AS taken
+            FROM workshops w 
+            LEFT JOIN registrations r ON w.id = r.workshop_id
+            GROUP BY w.id, w.title, w.capacity
+        `);
         res.json(rows);
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'Database connection failed' });
+        res.status(500).json({ error: error.message });
     }
 });
 
