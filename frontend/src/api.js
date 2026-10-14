@@ -6,7 +6,7 @@ const j = async r => {
 
 const adminHdr = () => ({ 'x-admin-token': sessionStorage.getItem('adminToken') || '' });
 
-export const getWorkshops = () => fetch('/api/workshops').then(j);
+export const getWorkshops = () => fetch('/api/workshops/', { cache: 'no-store' }).then(j);
 
 export const register = data => fetch('/api/registrations/', { 
   method: 'POST', 
