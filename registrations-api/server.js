@@ -6,6 +6,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+
 // Database connection pool
 const pool = mysql.createPool({
     host: process.env.DB_HOST || 'localhost',
@@ -26,7 +27,7 @@ const adminOnly = (req, res, next) => {
 
 // Healthcheck endpoint (required for Docker and Jenkins)
 app.get('/health', (req, res) => {
-    res.status(200).json({ status: 'OK' });
+    res.status(500).json({ status: 'OK' });
 });
 
 // Dashboard numbers (admin) - must be registered before '/:ref'
