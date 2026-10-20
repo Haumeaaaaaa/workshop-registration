@@ -27,7 +27,7 @@ const adminOnly = (req, res, next) => {
 
 // Healthcheck endpoint (required for Docker and Jenkins)
 app.get('/health', (req, res) => {
-    res.status(500).json({ status: 'OK' });
+    res.status(200).json({ status: 'OK' });
 });
 
 // Dashboard numbers (admin) - must be registered before '/:ref'
